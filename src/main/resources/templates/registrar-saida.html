@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Saída - Estação Fácil</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f7f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #2d3748;
+            padding: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(46, 125, 50, 0.08);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            color: #2e7d32;
+            font-weight: 600;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .subtitulo {
+            color: #4a5568;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        label {
+            color: #2e7d32;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 18px;
+            border: 1.5px solid #c8e6c9;
+            border-radius: 8px;
+            background-color: #fafdfa;
+            color: #2d3748;
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        select:focus {
+            border-color: #4caf50;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+        }
+
+        /* Caixa com o veículo selecionado */
+        .detalhes {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            border: 1.5px solid #c8e6c9;
+            border-radius: 8px;
+            background-color: #fafdfa;
+            font-size: 0.95rem;
+        }
+
+        .detalhes strong {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .detalhes span {
+            color: #4a5568;
+            text-align: right;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:focus-visible {
+            outline: 3px solid rgba(76, 175, 80, 0.4);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background-color: #4caf50;
+            color: #ffffff;
+            border: 2px solid #4caf50;
+        }
+
+        .btn-primary:hover {
+            background-color: #43a047;
+            border-color: #43a047;
+        }
+
+        .btn-secondary {
+            background-color: #ffffff;
+            color: #4caf50;
+            border: 2px solid #4caf50;
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f0f7f4;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Registrar Saída</h2>
+    <p class="subtitulo">Escolha a placa do veículo que está saindo.</p>
+
+    <label for="placa">Placa</label>
+    <select id="placa" onchange="selecionarVeiculo(this.value)">
+        <option value="">Selecione a placa</option>
+        <option th:each="v : ${veiculos}"
+                th:value="${v.id}"
+                th:text="${v.placa}"
+                th:selected="${veiculo != null and veiculo.id == v.id}">
+        </option>
+    </select>
+
+    <!-- o formulário fica FORA do select -->
+    <form th:if="${veiculo != null}" method="post"
+          th:action="@{/veiculo/saida/{id}(id=${veiculo.id})}"
+          onsubmit="return confirm('Confirmar a saída deste veículo?');">
+        <div class="detalhes">
+            <strong>Veículo</strong>
+            <span th:text="${veiculo.modelo + ' ' + veiculo.cor}">Fiat Uno Prata</span>
+        </div>
+        <button type="submit" class="btn btn-primary">Confirmar saída</button>
+    </form>
+
+    <a href="/painel" class="btn btn-secondary">Voltar ao painel</a>
+</div>
+
+<script>
+    function selecionarVeiculo(id) {
+        window.location.href = id ? "/veiculo/saida/" + id : "/veiculo/registrar-saida";
+    }
+</script>
+</body>
+</html>
