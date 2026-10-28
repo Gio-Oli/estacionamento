@@ -227,13 +227,15 @@
                 <td th:text="${#temporals.format(veiculo.horaEntrada, 'dd/MM/yyyy HH:mm')}">
                     08:30
                 </td>
-
                 <td>
                     <span class="status-badge status-active">
                         Ativo
                     </span>
                 </td>
 
+            </tr>
+            <tr th:if="${#lists.isEmpty(veiculos)}">
+                <td colspan="4">Nenhum veiculo estacionado</td>
             </tr>
 
             <!-- Linhas vazias -->

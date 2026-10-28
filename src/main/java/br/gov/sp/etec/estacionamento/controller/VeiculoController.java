@@ -28,6 +28,27 @@ public class VeiculoController {
         return "redirect:/painel";
     }
 
+    @GetMapping("/painel")
+    public String painel(Model model) {
+        // 1. Busca a lista de veículos cadastrados/estacionados
+        List<VeiculoEntity> veiculos = service.listaVeiculo();
+
+        // 2. Define o total de vagas fixo do estacionamento (ex: 50 vagas)
+        int totalVagas = 50;
+
+        // 3. Calcula as vagas ocupadas e disponíveis
+        int vagasOcupadas = veiculos.size();
+        int vagasDisponiveis = totalVagas - vagasOcupadas;
+
+        // 4. Adiciona os atributos para o Thymeleaf usar no HTML do painel
+        model.addAttribute("veiculos", veiculos);
+        model.addAttribute("vagasOcupadas", vagasOcupadas);
+        model.addAttribute("vagasDisponiveis", vagasDisponiveis);
+        model.addAttribute("totalVagas", totalVagas);
+
+        return "painel"; // Renderiza o arquivo painel.html
+    }
+
         @GetMapping("registrar-saida")
         public String registrarSaida(Model model) {
             var veiculos = service.listaVeiculo();
@@ -36,16 +57,16 @@ public class VeiculoController {
         }
         @GetMapping("saida/{id}")
         public String getVeiculo(Model model, @PathVariable Long id){
+        service.registrarSaida(id);
         List<VeiculoEntity> veiculos = service.listaVeiculo();
         model.addAttribute("veiculos", veiculos);
-        VeiculoEntity veiculo = service.buscaVeiculoPorId(id);
-        model.addAttribute("veiculo", veiculo);
         return "registrar-saida";
             }
 
     @PostMapping("saida/{id}")
     public String confirmarSaida(@PathVariable Long id) {
         service.daletarVeiculo(id);
+        List<VeiculoEntity> veiculos = service.listaVeiculo();
         return "redirect:/veiculo/registrar-saida";
     }
     }

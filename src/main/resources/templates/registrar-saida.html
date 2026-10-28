@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Saída - Estação Fácil</title>
+    <title>Estação Fácil - Registrar Saída</title>
+
     <style>
         * {
             box-sizing: border-box;
@@ -15,6 +17,7 @@
         body {
             background-color: #f0f7f4;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -22,7 +25,7 @@
             padding: 20px;
         }
 
-        .card {
+        .panel-container {
             background: #ffffff;
             padding: 40px 30px;
             border-radius: 16px;
@@ -30,153 +33,176 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            max-width: 400px;
+            max-width: 800px;
+            gap: 20px;
         }
 
         h2 {
             color: #2e7d32;
+            margin-bottom: 5px;
             font-weight: 600;
             font-size: 1.8rem;
             text-align: center;
-            margin-bottom: 6px;
         }
 
         .subtitulo {
             color: #4a5568;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 10px;
         }
 
-        label {
-            color: #2e7d32;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        select {
-            width: 100%;
-            padding: 12px 16px;
-            margin-bottom: 18px;
-            border: 1.5px solid #c8e6c9;
-            border-radius: 8px;
-            background-color: #fafdfa;
-            color: #2d3748;
-            font-size: 0.95rem;
-            outline: none;
-            cursor: pointer;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-        }
-
-        select:focus {
-            border-color: #4caf50;
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
-        }
-
-        /* Caixa com o veículo selecionado */
-        .detalhes {
+        /* Área dos botões */
+        .actions-area {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            margin-bottom: 18px;
-            border: 1.5px solid #c8e6c9;
-            border-radius: 8px;
-            background-color: #fafdfa;
-            font-size: 0.95rem;
-        }
-
-        .detalhes strong {
-            color: #2e7d32;
-            font-weight: 600;
-        }
-
-        .detalhes span {
-            color: #4a5568;
-            text-align: right;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 10px;
         }
 
         .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
-            text-align: center;
-            text-decoration: none;
             cursor: pointer;
+            text-decoration: none;
             transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        .btn:hover {
+            background-color: #43a047;
         }
 
         .btn:active {
             transform: scale(0.98);
         }
 
-        .btn:focus-visible {
-            outline: 3px solid rgba(76, 175, 80, 0.4);
-            outline-offset: 2px;
-        }
-
-        .btn-primary {
-            background-color: #4caf50;
-            color: #ffffff;
-            border: 2px solid #4caf50;
-        }
-
-        .btn-primary:hover {
-            background-color: #43a047;
-            border-color: #43a047;
-        }
-
+        /* Botão secundário / outline */
         .btn-secondary {
             background-color: #ffffff;
             color: #4caf50;
             border: 2px solid #4caf50;
-            margin-top: 12px;
         }
 
         .btn-secondary:hover {
             background-color: #f0f7f4;
         }
+
+        /* Botão de saída na tabela */
+        .btn-exit {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            background-color: #d32f2f;
+        }
+
+        .btn-exit:hover {
+            background-color: #c62828;
+        }
+
+        /* Tabela */
+        .table-container {
+            width: 100%;
+            border: 1.5px solid #c8e6c9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            background-color: #fafdfa;
+            padding: 15px;
+            border-bottom: 1.5px solid #c8e6c9;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #f0f7f4;
+            color: #2e7d32;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
     </style>
 </head>
+
 <body>
-<div class="card">
-    <h2>Registrar Saída</h2>
-    <p class="subtitulo">Escolha a placa do veículo que está saindo.</p>
 
-    <label for="placa">Placa</label>
-    <select id="placa" onchange="selecionarVeiculo(this.value)">
-        <option value="">Selecione a placa</option>
-        <option th:each="v : ${veiculos}"
-                th:value="${v.id}"
-                th:text="${v.placa}"
-                th:selected="${veiculo != null and veiculo.id == v.id}">
-        </option>
-    </select>
+<div class="panel-container">
 
-    <!-- o formulário fica FORA do select -->
-    <form th:if="${veiculo != null}" method="post"
-          th:action="@{/veiculo/saida/{id}(id=${veiculo.id})}"
-          onsubmit="return confirm('Confirmar a saída deste veículo?');">
-        <div class="detalhes">
-            <strong>Veículo</strong>
-            <span th:text="${veiculo.modelo + ' ' + veiculo.cor}">Fiat Uno Prata</span>
+    <h2>Estação Fácil</h2>
+    <p class="subtitulo">Clique em "Saída" no veículo correspondente.</p>
+
+    <!-- Botões de Ação Superior -->
+    <div class="actions-area">
+        <a th:href="@{/painel}" class="btn btn-secondary">Voltar ao Painel</a>
+        <a th:href="@{/veiculo/registrar-entrada}" class="btn">Registrar Entrada</a>
+    </div>
+
+    <!-- Tabela de Veículos -->
+    <div class="table-container">
+
+        <div class="table-header">
+            Selecione o Veículo para Registrar a Saída
         </div>
-        <button type="submit" class="btn btn-primary">Confirmar saída</button>
-    </form>
 
-    <a href="/painel" class="btn btn-secondary">Voltar ao painel</a>
+        <table>
+            <thead>
+            <tr>
+                <th>Placa</th>
+                <th>Modelo</th>
+                <th>Hora de Entrada</th>
+                <th>Ação</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <!-- Linha iterada com Thymeleaf -->
+            <tr th:each="veiculo : ${veiculos}">
+                <td th:text="${veiculo.placa}">ABC-1234</td>
+                <td th:text="${veiculo.modelo}">Fiat Uno</td>
+                <td th:text="${#temporals.format(veiculo.horaEntrada, 'dd/MM/yyyy HH:mm')}">08:30</td>
+                <td>
+                    <!-- Formulário individual para cada linha/veículo -->
+                    <form th:action="@{/veiculo/saida/{id}(id=${veiculo.id})}"
+                          method="post"
+                          onsubmit="return confirm('Deseja realmente confirmar a saída deste veículo?');">
+                        <button type="submit" class="btn btn-exit">Saída</button>
+                    </form>
+                </td>
+            </tr>
+
+            <!-- Mensagem caso não haja veículos -->
+            <tr th:if="${#lists.isEmpty(veiculos)}">
+                <td colspan="4" style="text-align: center; padding: 20px;">Nenhum veículo estacionado no momento.</td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+
 </div>
 
-<script>
-    function selecionarVeiculo(id) {
-        window.location.href = id ? "/veiculo/saida/" + id : "/veiculo/registrar-saida";
-    }
-</script>
 </body>
 </html>
